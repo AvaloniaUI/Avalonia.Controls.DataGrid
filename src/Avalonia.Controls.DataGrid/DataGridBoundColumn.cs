@@ -51,24 +51,42 @@ namespace Avalonia.Controls
 
                     if (_binding != null)
                     {
-                        if(_binding is StandardBindingBase binding)
+                        if(_binding is CompiledBindingExtension compiled)
                         {
-                            if (binding.Mode == BindingMode.OneWayToSource)
+                            if (compiled.Mode == BindingMode.OneWayToSource)
                             {
                                 throw new InvalidOperationException("DataGridColumn doesn't support BindingMode.OneWayToSource. Use BindingMode.TwoWay instead.");
                             }
 
-                            var path = (binding as Binding)?.Path ?? (binding as CompiledBindingExtension)?.Path.ToString();
-                            if (!string.IsNullOrEmpty(path) && binding.Mode == BindingMode.Default)
+                            var path = compiled.Path.ToString();
+                            if (!string.IsNullOrEmpty(path) && compiled.Mode == BindingMode.Default)
                             {
-                                binding.Mode = BindingMode.TwoWay;
+                                compiled.Mode = BindingMode.TwoWay;
                             } 
 
-                            if (binding.Converter == null && string.IsNullOrEmpty(binding.StringFormat))
+                            if (compiled.Converter == null && string.IsNullOrEmpty(compiled.StringFormat))
                             {
-                                binding.Converter = DataGridValueConverter.Instance;
+                                compiled.Converter = DataGridValueConverter.Instance;
                             }
-                        }  
+                        }
+                        else if (_binding is ReflectionBinding reflection)
+                        {
+                            if (reflection.Mode == BindingMode.OneWayToSource)
+                            {
+                                throw new InvalidOperationException("DataGridColumn doesn't support BindingMode.OneWayToSource. Use BindingMode.TwoWay instead.");
+                            }
+
+                            var path = reflection.Path.ToString();
+                            if (!string.IsNullOrEmpty(path) && reflection.Mode == BindingMode.Default)
+                            {
+                                reflection.Mode = BindingMode.TwoWay;
+                            }
+
+                            if (reflection.Converter == null && string.IsNullOrEmpty(reflection.StringFormat))
+                            {
+                                reflection.Converter = DataGridValueConverter.Instance;
+                            }
+                        }
 
                         // Apply the new Binding to existing rows in the DataGrid
                         if (OwningGrid != null)
