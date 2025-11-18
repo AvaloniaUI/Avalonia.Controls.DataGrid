@@ -3046,5 +3046,12 @@ namespace Avalonia.Controls
             _collapsedSlotsTable.PrintIndexes();
         }
 #endif
+        internal void RemoveReferenceFromCollectionViewGroup(DataGridCollectionViewGroup rowGroupInfo)
+        {
+            if (rowGroupInfo is INotifyPropertyChanged inpc)
+            {
+                inpc.PropertyChanged -= CollectionViewGroup_PropertyChanged;
+            }
+        }
     }
 }

@@ -12,6 +12,7 @@ using Avalonia.Input;
 using Avalonia.Media;
 using System;
 using System.Diagnostics;
+using Avalonia.LogicalTree;
 using Avalonia.Reactive;
 
 namespace Avalonia.Controls
@@ -472,5 +473,11 @@ namespace Avalonia.Controls
             }
         }
 
+        protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromLogicalTree(e);
+            OwningGrid.RemoveReferenceFromCollectionViewGroup(RowGroupInfo.CollectionViewGroup);
+            OwningGrid = null;
+        }
     }
 }
