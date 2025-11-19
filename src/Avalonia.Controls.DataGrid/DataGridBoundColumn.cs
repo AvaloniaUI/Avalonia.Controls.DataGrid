@@ -51,7 +51,7 @@ namespace Avalonia.Controls
 
                     if (_binding != null)
                     {
-                        if(_binding is CompiledBindingExtension compiled)
+                        if(_binding is CompiledBinding compiled)
                         {
                             if (compiled.Mode == BindingMode.OneWayToSource)
                             {
@@ -168,7 +168,7 @@ namespace Avalonia.Controls
             if (OwningGrid != null && OwningGrid.DataConnection.DataType != null
                 && Header == null && Binding != null && Binding is BindingBase binding)
             {
-                var path = (binding as Binding)?.Path ?? (binding as CompiledBindingExtension)?.Path.ToString();
+                var path = (binding as Binding)?.Path ?? (binding as CompiledBinding)?.Path.ToString();
                 if (!string.IsNullOrWhiteSpace(path))
                 {
                     var header = OwningGrid.DataConnection.DataType.GetDisplayName(path);

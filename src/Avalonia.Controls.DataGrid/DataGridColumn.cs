@@ -1188,7 +1188,7 @@ namespace Avalonia.Controls
                     {
                         result = binding.Path;
                     }
-                    else if (boundColumn.Binding is CompiledBindingExtension compiledBinding)
+                    else if (boundColumn.Binding is CompiledBinding compiledBinding)
                     {
                         result = compiledBinding.Path.ToString();
                     }
