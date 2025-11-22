@@ -149,8 +149,7 @@ namespace Avalonia.Controls
         {
             get
             {
-                Debug.Assert(OwningGrid != null);
-                return (RowGroupInfo.Slot == OwningGrid.CurrentSlot);
+                return RowGroupInfo.Slot == OwningGrid?.CurrentSlot;
             }
         }
 
