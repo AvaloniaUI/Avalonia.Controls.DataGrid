@@ -1,4 +1,4 @@
-﻿// (c) Copyright Microsoft Corporation.
+// (c) Copyright Microsoft Corporation.
 // This source is subject to the Microsoft Public License (Ms-PL).
 // Please see http://go.microsoft.com/fwlink/?LinkID=131993 for details.
 // All other rights reserved.
@@ -1007,7 +1007,7 @@ namespace Avalonia.Controls
                         HorizontalAdjustment = Math.Min(HorizontalAdjustment, _horizontalOffset);
                     }
                     // second try to scroll entire columns
-                    if (cx < displayWidth && _horizontalOffset > 0)
+                    if (cx < displayWidth && _horizontalOffset > LayoutHelper.LayoutEpsilon)
                     {
                         Debug.Assert(_negHorizontalOffset == 0);
                         dataGridColumn = ColumnsInternal.GetPreviousVisibleScrollingColumn(ColumnsItemsInternal[firstDisplayedScrollingCol]);
@@ -1022,7 +1022,7 @@ namespace Avalonia.Controls
                         }
                     }
                     // third try to partially scroll in first scrolled off column
-                    if (cx < displayWidth && _horizontalOffset > 0)
+                    if (cx < displayWidth && _horizontalOffset > LayoutHelper.LayoutEpsilon)
                     {
                         Debug.Assert(_negHorizontalOffset == 0);
                         dataGridColumn = ColumnsInternal.GetPreviousVisibleScrollingColumn(ColumnsItemsInternal[firstDisplayedScrollingCol]);
