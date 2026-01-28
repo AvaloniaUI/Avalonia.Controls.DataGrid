@@ -87,9 +87,6 @@ namespace Avalonia.Controls
         private const double DATAGRID_defaultMinColumnWidth = 20;
         private const double DATAGRID_defaultMaxColumnWidth = double.PositiveInfinity;
 
-        private List<Exception> _bindingValidationErrors;
-        private IDisposable _validationSubscription;
-
         private INotifyCollectionChanged _topLevelGroup;
         private ContentControl _clipboardContentControl;
 
@@ -781,7 +778,6 @@ namespace Avalonia.Controls
             _lostFocusActions = new Queue<Action>();
             _selectedItems = new DataGridSelectedItemsCollection(this);
             RowGroupHeadersTable = new IndexToValueTable<DataGridRowGroupInfo>();
-            _bindingValidationErrors = new List<Exception>();
 
             DisplayData = new DataGridDisplayData(this);
             ColumnsInternal = CreateColumnsInstance();
@@ -4173,15 +4169,11 @@ namespace Avalonia.Controls
             // If we're committing, explicitly update the source but watch out for any validation errors
             if (editAction == DataGridEditAction.Commit)
             {
-                void SetValidationStatus(ICellEditBinding binding)
+                void SetValidationStatus(BindingExpressionBase binding)
                 {
-                    if (binding.IsValid)
+                    if (!DataValidationErrors.GetHasErrors(editingElement))
                     {
                         ResetValidationStatus();
-                        if (editingElement != null)
-                        {
-                            DataValidationErrors.ClearErrors(editingElement);
-                        }
                     }
                     else
                     {
@@ -4199,22 +4191,14 @@ namespace Avalonia.Controls
                                 editingRow.ApplyState();
                             }
                         }
-
-                        if (editingElement != null)
-                        {
-                            DataValidationErrors.SetError(editingElement,
-                                new AggregateException(binding.ValidationErrors));
-                        }
                     }
                 }
 
                 var editBinding = CurrentColumn?.CellEditBinding;
-                if (editBinding != null && !editBinding.CommitEdit())
+                if (editBinding != null && DataValidationErrors.GetHasErrors(editingElement))
                 {
+                    editBinding.UpdateSource();
                     SetValidationStatus(editBinding);
-                    _validationSubscription?.Dispose();
-                    _validationSubscription = editBinding.ValidationChanged.Subscribe(v => SetValidationStatus(editBinding));
-
                     ScrollSlotIntoView(CurrentColumnIndex, CurrentSlot, forCurrentCellChange: false, forceHorizontalScroll: true);
                     return false;
                 }
@@ -6247,9 +6231,6 @@ namespace Avalonia.Controls
                 }
             }
             IsValid = true;
-
-            _validationSubscription?.Dispose();
-            _validationSubscription = null;
         }
 
         /// <summary>

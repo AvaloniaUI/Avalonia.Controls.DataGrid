@@ -7,6 +7,7 @@
 
 using Avalonia.Controls.Templates;
 using Avalonia.Controls.Utils;
+using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
@@ -95,7 +96,7 @@ namespace Avalonia.Controls
             }
         }
 
-        protected override Control GenerateEditingElement(DataGridCell cell, object dataItem, out ICellEditBinding binding)
+        protected override Control GenerateEditingElement(DataGridCell cell, object dataItem, out BindingExpressionBase binding)
         {
             binding = null;
             if(CellEditingTemplate != null)

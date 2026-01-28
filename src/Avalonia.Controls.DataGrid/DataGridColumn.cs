@@ -38,8 +38,8 @@ namespace Avalonia.Controls
         private IDataTemplate _headerTemplate;
         private DataGridColumnHeader _headerCell;
         private Control _editingElement;
-        private ICellEditBinding _editBinding;
-        private IBinding _clipboardContentBinding;
+        private BindingExpressionBase _editBinding;
+        private BindingBase _clipboardContentBinding;
         private ControlTheme _cellTheme;
         private Classes _cellStyleClasses;
         private bool _setWidthInternalNoCallback;
@@ -189,7 +189,7 @@ namespace Avalonia.Controls
             private set;
         }
 
-        internal ICellEditBinding CellEditBinding
+        internal BindingExpressionBase CellEditBinding
         {
             get => _editBinding;
         }
@@ -606,7 +606,7 @@ namespace Avalonia.Controls
         /// <summary>
         /// The binding that will be used to get or set cell content for the clipboard.
         /// </summary>
-        public virtual IBinding ClipboardContentBinding
+        public virtual BindingBase ClipboardContentBinding
         {
             get
             {
@@ -624,7 +624,7 @@ namespace Avalonia.Controls
         /// <param name="item">The item associated with a cell.</param>
         /// <param name="binding">The binding to get the value of.</param>
         /// <returns>The resultant cell value.</returns>
-        internal object GetCellValue(object item, IBinding binding)
+        internal object GetCellValue(object item, BindingBase binding)
         {
             Debug.Assert(OwningGrid != null);
 
@@ -750,7 +750,7 @@ namespace Avalonia.Controls
         /// <returns>
         /// A new editing element that is bound to the column's <see cref="P:Avalonia.Controls.DataGridBoundColumn.Binding" /> property value.
         /// </returns>
-        protected abstract Control GenerateEditingElement(DataGridCell cell, object dataItem, out ICellEditBinding binding);
+        protected abstract Control GenerateEditingElement(DataGridCell cell, object dataItem, out BindingExpressionBase binding);
 
         /// <summary>
         /// When overridden in a derived class, gets a read-only element that is bound to the column's

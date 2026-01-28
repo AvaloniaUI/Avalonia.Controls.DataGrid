@@ -153,7 +153,7 @@ namespace Avalonia.Controls
             if (dataGridColumn is DataGridBoundColumn dataGridBoundColumn &&
                 dataGridBoundColumn.Binding is BindingBase binding)
             {
-                var path = (binding as Binding)?.Path ?? (binding as CompiledBindingExtension)?.Path.ToString();
+                var path = (binding as ReflectionBinding)?.Path ?? (binding as CompiledBinding)?.Path.ToString();
 
                 if (string.IsNullOrWhiteSpace(path))
                 {

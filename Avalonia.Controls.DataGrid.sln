@@ -1,14 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11415.280 d18.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia.Controls.DataGrid", "src\Avalonia.Controls.DataGrid\Avalonia.Controls.DataGrid.csproj", "{AAFEDBAD-2E68-4CAD-8C21-132B166C43C6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{3ACF6285-9101-4A01-9C62-C2222FB8091C}"
 	ProjectSection(SolutionItems) = preProject
-		Directory.Build.props = Directory.Build.props
-		build\SharedVersion.props = build\SharedVersion.props
-		licence.md = licence.md
-		readme.md = readme.md
 		azure-pipelines.yml = azure-pipelines.yml
+		Directory.Build.props = Directory.Build.props
+		licence.md = licence.md
+		nuget.config = nuget.config
+		readme.md = readme.md
+		build\SharedVersion.props = build\SharedVersion.props
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Avalonia.Controls.DataGrid.UnitTests", "src\Avalonia.Controls.DataGrid.UnitTests\Avalonia.Controls.DataGrid.UnitTests.csproj", "{91F13463-94A3-4635-96A2-EBB8A7D899DA}"
@@ -33,5 +37,8 @@ Global
 		{3F8265C6-4520-4E48-BFEC-F73E20F6EEDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F8265C6-4520-4E48-BFEC-F73E20F6EEDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F8265C6-4520-4E48-BFEC-F73E20F6EEDB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 EndGlobal
