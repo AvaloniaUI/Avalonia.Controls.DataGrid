@@ -39,7 +39,7 @@ namespace Avalonia.Controls
         private DataGridColumnHeader _headerCell;
         private Control _editingElement;
         private ICellEditBinding _editBinding;
-        private IBinding _clipboardContentBinding;
+        private BindingBase _clipboardContentBinding;
         private ControlTheme _cellTheme;
         private Classes _cellStyleClasses;
         private bool _setWidthInternalNoCallback;
@@ -606,7 +606,7 @@ namespace Avalonia.Controls
         /// <summary>
         /// The binding that will be used to get or set cell content for the clipboard.
         /// </summary>
-        public virtual IBinding ClipboardContentBinding
+        public virtual BindingBase ClipboardContentBinding
         {
             get
             {
@@ -624,7 +624,7 @@ namespace Avalonia.Controls
         /// <param name="item">The item associated with a cell.</param>
         /// <param name="binding">The binding to get the value of.</param>
         /// <returns>The resultant cell value.</returns>
-        internal object GetCellValue(object item, IBinding binding)
+        internal object GetCellValue(object item, BindingBase binding)
         {
             Debug.Assert(OwningGrid != null);
 

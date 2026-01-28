@@ -23,7 +23,7 @@ namespace Avalonia.Controls
 #endif
     abstract class DataGridBoundColumn : DataGridColumn
     {
-        private IBinding _binding; 
+        private BindingBase _binding; 
 
         /// <summary>
         /// Gets or sets the binding that associates the column with a property in the data source.
@@ -31,7 +31,7 @@ namespace Avalonia.Controls
         //TODO Binding
         [AssignBinding]
         [InheritDataTypeFromItems(nameof(DataGrid.ItemsSource), AncestorType = typeof(DataGrid))]
-        public virtual IBinding Binding
+        public virtual BindingBase Binding
         {
             get
             {
@@ -51,24 +51,42 @@ namespace Avalonia.Controls
 
                     if (_binding != null)
                     {
-                        if(_binding is BindingBase binding)
+                        if(_binding is CompiledBinding compiled)
                         {
-                            if (binding.Mode == BindingMode.OneWayToSource)
+                            if (compiled.Mode == BindingMode.OneWayToSource)
                             {
                                 throw new InvalidOperationException("DataGridColumn doesn't support BindingMode.OneWayToSource. Use BindingMode.TwoWay instead.");
                             }
 
-                            var path = (binding as Binding)?.Path ?? (binding as CompiledBindingExtension)?.Path.ToString();
-                            if (!string.IsNullOrEmpty(path) && binding.Mode == BindingMode.Default)
+                            var path = compiled.Path.ToString();
+                            if (!string.IsNullOrEmpty(path) && compiled.Mode == BindingMode.Default)
                             {
-                                binding.Mode = BindingMode.TwoWay;
+                                compiled.Mode = BindingMode.TwoWay;
                             } 
 
-                            if (binding.Converter == null && string.IsNullOrEmpty(binding.StringFormat))
+                            if (compiled.Converter == null && string.IsNullOrEmpty(compiled.StringFormat))
                             {
-                                binding.Converter = DataGridValueConverter.Instance;
+                                compiled.Converter = DataGridValueConverter.Instance;
                             }
-                        }  
+                        }
+                        else if (_binding is ReflectionBinding reflection)
+                        {
+                            if (reflection.Mode == BindingMode.OneWayToSource)
+                            {
+                                throw new InvalidOperationException("DataGridColumn doesn't support BindingMode.OneWayToSource. Use BindingMode.TwoWay instead.");
+                            }
+
+                            var path = reflection.Path.ToString();
+                            if (!string.IsNullOrEmpty(path) && reflection.Mode == BindingMode.Default)
+                            {
+                                reflection.Mode = BindingMode.TwoWay;
+                            }
+
+                            if (reflection.Converter == null && string.IsNullOrEmpty(reflection.StringFormat))
+                            {
+                                reflection.Converter = DataGridValueConverter.Instance;
+                            }
+                        }
 
                         // Apply the new Binding to existing rows in the DataGrid
                         if (OwningGrid != null)
@@ -86,7 +104,7 @@ namespace Avalonia.Controls
         /// The binding that will be used to get or set cell content for the clipboard.
         /// If the base ClipboardContentBinding is not explicitly set, this will return the value of Binding.
         /// </summary>
-        public override IBinding ClipboardContentBinding
+        public override BindingBase ClipboardContentBinding
         {
             get
             {
@@ -113,25 +131,29 @@ namespace Avalonia.Controls
             return element;
         } 
 
-        private static ICellEditBinding BindEditingElement(AvaloniaObject target, AvaloniaProperty property, IBinding binding)
+        private static ICellEditBinding BindEditingElement(AvaloniaObject target, AvaloniaProperty property, BindingBase binding)
         {
-            var result = binding.Initiate(target, property, enableDataValidation: true); 
-
-            if (result != null)
-            {
-                if(result.Source is IAvaloniaSubject<object> subject)
-                {
-                    var bindingHelper = new CellEditBinding(subject);
-                    var instanceBinding = new InstancedBinding(bindingHelper.InternalSubject, result.Mode, result.Priority); 
-
-                    BindingOperations.Apply(target, property, instanceBinding, null);
-                    return bindingHelper;
-                } 
-
-                BindingOperations.Apply(target, property, result, null);
-            } 
-
+            // TODO: Reimplement validation.
+            target.Bind(property, binding);
             return null;
+
+            //var result = binding.Initiate(target, property, enableDataValidation: true); 
+
+            //if (result != null)
+            //{
+            //    if(result.Source is IAvaloniaSubject<object> subject)
+            //    {
+            //        var bindingHelper = new CellEditBinding(subject);
+            //        var instanceBinding = new InstancedBinding(bindingHelper.InternalSubject, result.Mode, result.Priority); 
+
+            //        BindingOperations.Apply(target, property, instanceBinding, null);
+            //        return bindingHelper;
+            //    } 
+
+            //    BindingOperations.Apply(target, property, result, null);
+            //} 
+
+            //return null;
         } 
 
         protected abstract Control GenerateEditingElementDirect(DataGridCell cell, object dataItem); 
