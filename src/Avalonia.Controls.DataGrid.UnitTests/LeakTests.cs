@@ -6,7 +6,6 @@ using Avalonia.Headless;
 using Avalonia.Threading;
 using JetBrains.dotMemoryUnit;
 using Xunit;
-using Xunit.Abstractions;
 
 namespace Avalonia.Controls.DataGridTests;
 
