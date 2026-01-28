@@ -17,7 +17,6 @@
   
   <ItemGroup>
     <PackageReference Include="Avalonia.Headless.XUnit" Version="$(AvaloniaVersion)" />
-    <PackageReference Include="JetBrains.dotMemoryUnit" Version="3.2.20220510" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="xunit.analyzers" Version="1.27.0">
       <PrivateAssets>all</PrivateAssets>
