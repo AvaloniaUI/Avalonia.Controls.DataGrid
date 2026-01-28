@@ -6,6 +6,7 @@
 #nullable disable
 
 using Avalonia.Controls.Utils;
+using Avalonia.Data;
 using Avalonia.Interactivity;
 using Avalonia.Utilities;
 
@@ -58,7 +59,7 @@ namespace Avalonia.Controls
             return null;
         }
 
-        protected override Control GenerateEditingElement(DataGridCell cell, object dataItem, out ICellEditBinding editBinding)
+        protected override Control GenerateEditingElement(DataGridCell cell, object dataItem, out BindingExpressionBase editBinding)
         {
             editBinding = null;
             return null;

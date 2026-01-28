@@ -118,42 +118,17 @@ namespace Avalonia.Controls
 
         //TODO Rename
         //TODO Validation
-        protected sealed override Control GenerateEditingElement(DataGridCell cell, object dataItem, out ICellEditBinding editBinding)
+        protected sealed override Control GenerateEditingElement(DataGridCell cell, object dataItem, out BindingExpressionBase editBinding)
         {
             Control element = GenerateEditingElementDirect(cell, dataItem);
             editBinding = null; 
 
             if (Binding != null)
             {
-                editBinding = BindEditingElement(element, BindingTarget, Binding);
+                editBinding = element.Bind(BindingTarget, Binding);
             } 
 
             return element;
-        } 
-
-        private static ICellEditBinding BindEditingElement(AvaloniaObject target, AvaloniaProperty property, BindingBase binding)
-        {
-            // TODO: Reimplement validation.
-            target.Bind(property, binding);
-            return null;
-
-            //var result = binding.Initiate(target, property, enableDataValidation: true); 
-
-            //if (result != null)
-            //{
-            //    if(result.Source is IAvaloniaSubject<object> subject)
-            //    {
-            //        var bindingHelper = new CellEditBinding(subject);
-            //        var instanceBinding = new InstancedBinding(bindingHelper.InternalSubject, result.Mode, result.Priority); 
-
-            //        BindingOperations.Apply(target, property, instanceBinding, null);
-            //        return bindingHelper;
-            //    } 
-
-            //    BindingOperations.Apply(target, property, result, null);
-            //} 
-
-            //return null;
         } 
 
         protected abstract Control GenerateEditingElementDirect(DataGridCell cell, object dataItem); 

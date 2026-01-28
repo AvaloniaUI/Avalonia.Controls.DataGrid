@@ -38,7 +38,7 @@ namespace Avalonia.Controls
         private IDataTemplate _headerTemplate;
         private DataGridColumnHeader _headerCell;
         private Control _editingElement;
-        private ICellEditBinding _editBinding;
+        private BindingExpressionBase _editBinding;
         private BindingBase _clipboardContentBinding;
         private ControlTheme _cellTheme;
         private Classes _cellStyleClasses;
@@ -189,7 +189,7 @@ namespace Avalonia.Controls
             private set;
         }
 
-        internal ICellEditBinding CellEditBinding
+        internal BindingExpressionBase CellEditBinding
         {
             get => _editBinding;
         }
@@ -750,7 +750,7 @@ namespace Avalonia.Controls
         /// <returns>
         /// A new editing element that is bound to the column's <see cref="P:Avalonia.Controls.DataGridBoundColumn.Binding" /> property value.
         /// </returns>
-        protected abstract Control GenerateEditingElement(DataGridCell cell, object dataItem, out ICellEditBinding binding);
+        protected abstract Control GenerateEditingElement(DataGridCell cell, object dataItem, out BindingExpressionBase binding);
 
         /// <summary>
         /// When overridden in a derived class, gets a read-only element that is bound to the column's
