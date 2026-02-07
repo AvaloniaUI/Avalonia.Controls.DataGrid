@@ -3442,7 +3442,29 @@ namespace Avalonia.Collections
                 RefreshOrDefer();
                 return;
             }
-            
+
+            // process move action and fire notification
+            if (args.OldItems != null && args.Action == NotifyCollectionChangedAction.Move)
+            {
+                var targetList = UsesLocalArray ? _internalList : SourceList;
+
+                for (int i = 0; i < args.OldItems.Count; i++)
+                {
+                    var item = args.OldItems[i];
+
+                    int oldIndex = targetList.IndexOf(item);
+                    if (oldIndex >= 0)
+                        targetList.RemoveAt(oldIndex);
+
+                    int newIndex = Math.Min(args.NewStartingIndex + i, targetList.Count);
+
+                    targetList.Insert(newIndex, item);
+
+                    OnCollectionChanged(new NotifyCollectionChangedEventArgs(
+                        NotifyCollectionChangedAction.Move, item, newIndex, oldIndex));
+                }
+            }
+
             // fire notifications for removes
             if (args.OldItems != null && 
                 (args.Action == NotifyCollectionChangedAction.Remove ||
