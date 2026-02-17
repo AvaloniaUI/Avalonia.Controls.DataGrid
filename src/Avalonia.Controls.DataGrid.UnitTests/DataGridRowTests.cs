@@ -159,7 +159,7 @@ public class DataGridRowTests
     {
         return new Style(x => x.OfType<DataGridRow>())
         {
-            Setters = { new Setter(DataGridRow.IsSelectedProperty, new Binding("IsSelected", BindingMode.TwoWay)) }
+            Setters = { new Setter(DataGridRow.IsSelectedProperty, new ReflectionBinding("IsSelected") { Mode = BindingMode.TwoWay }) }
         };
     }
 
@@ -167,7 +167,7 @@ public class DataGridRowTests
     {
         return new Style(x => x.OfType<DataGridRow>())
         {
-            Setters = { new Setter(DataGridRow.HeaderProperty, new Binding("Name", BindingMode.OneWay))} 
+            Setters = { new Setter(DataGridRow.HeaderProperty, new ReflectionBinding("Name") { Mode = BindingMode.OneWay })}
         };
     }
 
