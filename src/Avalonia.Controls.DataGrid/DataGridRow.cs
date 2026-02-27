@@ -18,7 +18,6 @@ using Avalonia.VisualTree;
 using System;
 using System.Diagnostics;
 using Avalonia.Automation.Peers;
-using Avalonia.Reactive;
 using Avalonia.Automation;
 
 namespace Avalonia.Controls
@@ -1034,19 +1033,16 @@ namespace Avalonia.Controls
                         {
                             layoutableContent.LayoutUpdated += DetailsContent_LayoutUpdated;
 
-                            _detailsContentSizeSubscription = new CompositeDisposable(2)
-                            {
-                                Disposable.Create(() => layoutableContent.LayoutUpdated -= DetailsContent_LayoutUpdated),
+                            _detailsContentSizeSubscription = new CompositeDisposable(
+                            [
+                                new ActionDisposable(() => layoutableContent.LayoutUpdated -= DetailsContent_LayoutUpdated),
                                 _detailsContent.GetObservable(MarginProperty).Subscribe(DetailsContent_MarginChanged)
-                            };
-
-
+                            ]);
                         }
                         else
                         {
                             _detailsContentSizeSubscription =
-                                _detailsContent.GetObservable(MarginProperty)
-                                               .Subscribe(DetailsContent_MarginChanged);
+                                _detailsContent.GetObservable(MarginProperty).Subscribe(DetailsContent_MarginChanged);
 
                         }
 
