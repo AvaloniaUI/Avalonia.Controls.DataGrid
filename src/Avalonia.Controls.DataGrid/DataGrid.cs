@@ -2236,22 +2236,6 @@ namespace Avalonia.Controls
             return desiredSize;
         }
 
-        /// <inheritdoc/>
-        protected override void OnDataContextBeginUpdate()
-        {
-            base.OnDataContextBeginUpdate();
-
-            NotifyDataContextPropertyForAllRowCells(GetAllRows(), true);
-        }
-
-        /// <inheritdoc/>
-        protected override void OnDataContextEndUpdate()
-        {
-            base.OnDataContextEndUpdate();
-
-            NotifyDataContextPropertyForAllRowCells(GetAllRows(), false);
-        }
-
         /// <summary>
         /// Raises the BeginningEdit event.
         /// </summary>
@@ -3280,20 +3264,6 @@ namespace Avalonia.Controls
             }
         }
 
-        private static void NotifyDataContextPropertyForAllRowCells(IEnumerable<DataGridRow> rowSource, bool arg2)
-        {
-            foreach (DataGridRow row in rowSource)
-            {
-                foreach (DataGridCell cell in row.Cells)
-                {
-                    if (cell.Content is StyledElement cellContent)
-                    {
-                        DataContextProperty.Notifying?.Invoke(cellContent, arg2);
-                    }
-                }
-            }
-        }
-
         private void UpdateRowDetailsVisibilityMode(DataGridRowDetailsVisibilityMode newDetailsMode)
         {
             int itemCount = DataConnection.Count;
@@ -4021,7 +3991,7 @@ namespace Avalonia.Controls
             {
                 bool focusLeftDataGrid = true;
                 bool dataGridWillReceiveRoutedEvent = true;
-                Visual focusedObject = FocusManager.GetFocusManager(this)?.GetFocusedElement() as Visual;
+                var focusedObject = TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement() as Visual;
                 DataGridColumn editingColumn = null;
 
                 while (focusedObject != null)
@@ -4911,7 +4881,7 @@ namespace Avalonia.Controls
             if (!ctrl)
             {
                 // If Enter was used by a TextBox, we shouldn't handle the key
-                if (FocusManager.GetFocusManager(this)?.GetFocusedElement() is TextBox focusedTextBox
+                if (TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement() is TextBox focusedTextBox
                     && focusedTextBox.AcceptsReturn)
                 {
                     return false;
@@ -6116,7 +6086,7 @@ namespace Avalonia.Controls
         /// <returns>The formatted string.</returns>
         private string FormatClipboardContent(DataGridRowClipboardEventArgs e)
         {
-            var text = StringBuilderCache.Acquire();
+            var text = new StringBuilder();
             var clipboardRowContent = e.ClipboardRowContent;
             var numberOfItem = clipboardRowContent.Count;
             for (int cellIndex = 0; cellIndex < numberOfItem; cellIndex++)
@@ -6134,7 +6104,7 @@ namespace Avalonia.Controls
                     text.Append('\n');
                 }
             }
-            return StringBuilderCache.GetStringAndRelease(text);
+            return text.ToString();
         }
 
         /// <summary>
@@ -6149,7 +6119,7 @@ namespace Avalonia.Controls
 
             if (ctrl && !shift && !alt && ClipboardCopyMode != DataGridClipboardCopyMode.None && SelectedItems.Count > 0)
             {
-                var textBuilder = StringBuilderCache.Acquire();
+                var textBuilder = new StringBuilder();
 
                 if (ClipboardCopyMode == DataGridClipboardCopyMode.IncludeHeader)
                 {
@@ -6175,7 +6145,7 @@ namespace Avalonia.Controls
                     textBuilder.Append(FormatClipboardContent(itemArgs));
                 }
 
-                string text = StringBuilderCache.GetStringAndRelease(textBuilder);
+                string text = textBuilder.ToString();
 
                 if (!string.IsNullOrEmpty(text))
                 {

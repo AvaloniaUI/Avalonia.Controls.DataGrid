@@ -17,6 +17,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using Avalonia.Data;
+using Avalonia.Layout;
 using Avalonia.Styling;
 
 namespace Avalonia.Controls
@@ -2564,7 +2565,7 @@ namespace Avalonia.Controls
                             double heightChange = UpdateRowGroupVisibility(rowGroupInfo, isVisible, isDisplayed: false);
                             // Use epsilon instead of 0 here so that in the off chance that our estimates put the vertical offset negative
                             // the user can still scroll to the top since the offset is non-zero
-                            SetVerticalOffset(Math.Max(MathUtilities.DoubleEpsilon, _verticalOffset + heightChange));
+                            SetVerticalOffset(Math.Max(LayoutHelper.LayoutEpsilon, _verticalOffset + heightChange));
                         }
                         else
                         {
