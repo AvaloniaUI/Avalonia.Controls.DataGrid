@@ -96,6 +96,7 @@ namespace Avalonia.Controls
             PointerMoved += DataGridColumnHeader_PointerMoved;
             PointerEntered += DataGridColumnHeader_PointerEntered;
             PointerExited += DataGridColumnHeader_PointerExited;
+            DoubleTapped += DataGridColumnHeader_DoubleTapped;
         }
 
         protected override AutomationPeer OnCreateAutomationPeer()
@@ -533,6 +534,66 @@ namespace Avalonia.Controls
             Point mousePositionHeaders = e.GetPosition(OwningGrid.ColumnHeaders);
 
             OnMouseMove(e, mousePosition, mousePositionHeaders);
+        }
+
+        private void DataGridColumnHeader_DoubleTapped(object sender, TappedEventArgs e)
+        {
+            if (OwningColumn == null || OwningGrid == null || !IsEnabled || e.Handled)
+            {
+                return;
+            }
+
+            Point mousePosition = e.GetPosition(this);
+            double distanceFromLeft = mousePosition.X;
+            double distanceFromRight = Bounds.Width - distanceFromLeft;
+
+            DataGridColumn columnToAutoFit = null;
+
+            if (distanceFromRight <= DATAGRIDCOLUMNHEADER_resizeRegionWidth)
+            {
+                // Right edge of header — auto-fit this column
+                columnToAutoFit = OwningColumn;
+            }
+            else if (distanceFromLeft <= DATAGRIDCOLUMNHEADER_resizeRegionWidth)
+            {
+                // Left edge of header — auto-fit the column to the left
+                if (!(OwningColumn is DataGridFillerColumn))
+                {
+                    columnToAutoFit = OwningGrid.ColumnsInternal.GetPreviousVisibleNonFillerColumn(OwningColumn);
+                }
+            }
+
+            if (columnToAutoFit == null || !CanResizeColumn(columnToAutoFit))
+            {
+                return;
+            }
+
+            AutoFitColumnWidth(columnToAutoFit);
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Auto-fits a column's width to its content by temporarily switching to Auto sizing,
+        /// allowing the DataGrid to measure all visible cells and the header, then locking the
+        /// resulting width to a fixed pixel value.
+        /// </summary>
+        private static void AutoFitColumnWidth(DataGridColumn column)
+        {
+            var oldWidth = column.Width;
+
+            // Reset the desired width so the column will be fully re-measured during the next layout pass.
+            column.SetWidthInternalNoCallback(
+                new DataGridLength(oldWidth.Value, DataGridLengthUnitType.Auto, double.NaN, oldWidth.DisplayValue));
+
+            // After the layout pass completes, lock the measured width to a fixed pixel value
+            // so subsequent manual drag-resizing works predictably.
+            Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+            {
+                double measuredWidth = Math.Max(column.ActualMinWidth, Math.Min(column.ActualMaxWidth, column.ActualWidth));
+                column.SetWidthInternalNoCallback(
+                    new DataGridLength(measuredWidth, DataGridLengthUnitType.Pixel, measuredWidth, measuredWidth));
+                column.OwningGrid?.OnColumnWidthChanged(column);
+            }, Avalonia.Threading.DispatcherPriority.Loaded);
         }
 
         /// <summary>
