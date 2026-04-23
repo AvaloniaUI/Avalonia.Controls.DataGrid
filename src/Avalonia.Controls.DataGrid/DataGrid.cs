@@ -3209,9 +3209,9 @@ namespace Avalonia.Controls
         //TODO TabStop
         internal bool WaitForLostFocus(Action action)
         {
-            if (EditingRow != null && EditingColumnIndex != -1 && !_executingLostFocusActions)
+            if (EditingRow != null && _editingColumnIndex != -1 && !_executingLostFocusActions)
             {
-                DataGridColumn editingColumn = ColumnsItemsInternal[EditingColumnIndex];
+                DataGridColumn editingColumn = ColumnsItemsInternal[_editingColumnIndex];
                 Control editingElement = editingColumn.GetCellContent(EditingRow);
                 if (editingElement != null && editingElement.ContainsChild(_focusedObject))
                 {
@@ -3994,9 +3994,9 @@ namespace Avalonia.Controls
 
                 DataGridColumn editingColumn = null;
 
-                if (EditingRow != null && EditingColumnIndex != -1)
+                if (EditingRow != null && _editingColumnIndex != -1)
                 {
-                    editingColumn = ColumnsItemsInternal[EditingColumnIndex];
+                    editingColumn = ColumnsItemsInternal[_editingColumnIndex];
                 }
 
                 if (focusLeftDataGrid && !(editingColumn is DataGridTemplateColumn))
