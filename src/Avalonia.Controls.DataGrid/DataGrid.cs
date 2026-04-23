@@ -4,48 +4,47 @@
 
 #nullable disable
 
-using Avalonia.Collections;
-using Avalonia.Controls.Primitives;
-using Avalonia.Controls.Templates;
-using Avalonia.Data;
-using Avalonia.Input;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using Avalonia.VisualTree;
-using Avalonia.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Text;
-using System.Linq;
-using Avalonia.Input.Platform;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
 using Avalonia.Automation.Peers;
+using Avalonia.Collections;
 using Avalonia.Controls.Automation.Peers;
-using Avalonia.Controls.Utils;
-using Avalonia.Layout;
 using Avalonia.Controls.Metadata;
-using Avalonia.Input.GestureRecognizers;
-using Avalonia.Styling;
+using Avalonia.Controls.Primitives;
+using Avalonia.Controls.Templates;
+using Avalonia.Controls.Utils;
+using Avalonia.Data;
+using Avalonia.Input;
+using Avalonia.Input.Platform;
+using Avalonia.Interactivity;
+using Avalonia.Layout;
+using Avalonia.Media;
 using Avalonia.Reactive;
+using Avalonia.Styling;
+using Avalonia.Utilities;
+using Avalonia.VisualTree;
 
 namespace Avalonia.Controls
 {
     /// <summary>
     /// Displays data in a customizable grid.
     /// </summary>
-    [TemplatePart(DATAGRID_elementBottomRightCornerHeaderName,     typeof(Visual))]
-    [TemplatePart(DATAGRID_elementColumnHeadersPresenterName,      typeof(DataGridColumnHeadersPresenter))]
+    [TemplatePart(DATAGRID_elementBottomRightCornerHeaderName, typeof(Visual))]
+    [TemplatePart(DATAGRID_elementColumnHeadersPresenterName, typeof(DataGridColumnHeadersPresenter))]
     [TemplatePart(DATAGRID_elementFrozenColumnScrollBarSpacerName, typeof(Control))]
-    [TemplatePart(DATAGRID_elementHorizontalScrollbarName,         typeof(ScrollBar))]
-    [TemplatePart(DATAGRID_elementRowsPresenterName,               typeof(DataGridRowsPresenter))]
-    [TemplatePart(DATAGRID_elementTopLeftCornerHeaderName,         typeof(ContentControl))]
-    [TemplatePart(DATAGRID_elementTopRightCornerHeaderName,        typeof(ContentControl))]
-    [TemplatePart(DATAGRID_elementVerticalScrollbarName,           typeof(ScrollBar))]
+    [TemplatePart(DATAGRID_elementHorizontalScrollbarName, typeof(ScrollBar))]
+    [TemplatePart(DATAGRID_elementRowsPresenterName, typeof(DataGridRowsPresenter))]
+    [TemplatePart(DATAGRID_elementTopLeftCornerHeaderName, typeof(ContentControl))]
+    [TemplatePart(DATAGRID_elementTopRightCornerHeaderName, typeof(ContentControl))]
+    [TemplatePart(DATAGRID_elementVerticalScrollbarName, typeof(ScrollBar))]
     [PseudoClasses(":invalid", ":empty-rows", ":empty-columns")]
 #if !DATAGRID_INTERNAL
     public
@@ -891,7 +890,7 @@ namespace Avalonia.Controls
                 }
                 else
                 {
-                    newCollectionView =  newItemsSource is not null
+                    newCollectionView = newItemsSource is not null
                         ? DataGridDataConnection.CreateView(newItemsSource)
                         : default;
                 }
@@ -900,8 +899,8 @@ namespace Avalonia.Controls
 
                 if (oldCollectionView != DataConnection.CollectionView)
                 {
-                    RaisePropertyChanged(CollectionViewProperty, 
-                        oldCollectionView, 
+                    RaisePropertyChanged(CollectionViewProperty,
+                        oldCollectionView,
                         newCollectionView);
                 }
 
@@ -2301,15 +2300,15 @@ namespace Avalonia.Controls
         protected override void OnPointerWheelChanged(PointerWheelEventArgs e)
         {
             var delta = e.Delta;
-            
+
             // KeyModifiers.Shift should scroll in horizontal direction. This does not work on every platform. 
             // If Shift-Key is pressed and X is close to 0 we swap the Vector.
             if (e.KeyModifiers == KeyModifiers.Shift && MathUtilities.IsZero(delta.X))
             {
                 delta = new Vector(delta.Y, delta.X);
             }
-            
-            if(UpdateScroll(delta * DATAGRID_mouseWheelDelta))
+
+            if (UpdateScroll(delta * DATAGRID_mouseWheelDelta))
             {
                 e.Handled = true;
             }
@@ -2349,7 +2348,7 @@ namespace Avalonia.Controls
                 {
                     DisplayData.PendingVerticalScrollHeight = scrollHeight;
                     handled = true;
-                    
+
                     var eventType = scrollHeight > 0 ? ScrollEventType.SmallIncrement : ScrollEventType.SmallDecrement;
                     VerticalScroll?.Invoke(this, new ScrollEventArgs(eventType, scrollHeight));
                 }
@@ -2374,7 +2373,7 @@ namespace Avalonia.Controls
                         // We don't need to invalidate once again after UpdateHorizontalOffset.
                         ignoreInvalidate = true;
                         handled = true;
-                        
+
                         var eventType = horizontalOffset > 0 ? ScrollEventType.SmallIncrement : ScrollEventType.SmallDecrement;
                         HorizontalScroll?.Invoke(this, new ScrollEventArgs(eventType, horizontalOffset));
                     }
@@ -3323,7 +3322,7 @@ namespace Avalonia.Controls
             {
                 newCell.OwningColumn = column;
                 newCell.IsVisible = column.IsVisible;
-                if (row.OwningGrid.CellTheme is {} cellTheme)
+                if (row.OwningGrid.CellTheme is { } cellTheme)
                 {
                     newCell.SetValue(ThemeProperty, cellTheme, BindingPriority.Template);
                 }
@@ -3989,7 +3988,9 @@ namespace Avalonia.Controls
             _focusedObject = null;
             if (ContainsFocus)
             {
-                var focusedObject = TopLevel.GetTopLevel(this)?.FocusManager.GetFocusedElement() as Visual;
+                var focusedObject = TopLevel.GetTopLevel(this)?.FocusManager.GetFocusedElement() as Visual;               
+                var root = focusedObject?.GetVisualRoot();
+                var isPopup = root != null && root != this.GetVisualRoot();
                 var focusLeftDataGrid = !this.IsVisualAncestorOf(focusedObject);
 
                 DataGridColumn editingColumn = null;
@@ -3999,7 +4000,7 @@ namespace Avalonia.Controls
                     editingColumn = ColumnsItemsInternal[_editingColumnIndex];
                 }
 
-                if (focusLeftDataGrid && !(editingColumn is DataGridTemplateColumn))
+                if (focusLeftDataGrid && editingColumn is not DataGridTemplateColumn && !isPopup)
                 {
                     ContainsFocus = false;
                     if (EditingRow != null)
@@ -5179,7 +5180,8 @@ namespace Avalonia.Controls
                 return false;
             }
 
-            if (WaitForLostFocus(delegate { ProcessRightKey(shift, ctrl); }))
+            if (WaitForLostFocus(delegate
+            { ProcessRightKey(shift, ctrl); }))
             {
                 return true;
             }
