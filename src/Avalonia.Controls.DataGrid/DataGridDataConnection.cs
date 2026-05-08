@@ -669,8 +669,18 @@ namespace Avalonia.Controls
                         }
                     }
                     break;
+                case NotifyCollectionChangedAction.Move:
+                    Debug.Assert(e.OldItems != null, "Unexpected NotifyCollectionChangedAction.Move notification");
+                    if (!IsGrouping)
+                    {
+                        // If we're grouping then we handle this through the CollectionViewGroup notifications
+                        Debug.Assert(e.OldItems.Count == 1);
+                        _owner.RemoveRowAt(e.OldStartingIndex, e.OldItems[0]);
+                        _owner.InsertRowAt(e.NewStartingIndex);
+                    }
+                    break;
                 case NotifyCollectionChangedAction.Replace:
-                    throw new NotSupportedException(); // 
+                    throw new NotSupportedException(); //
 
                 case NotifyCollectionChangedAction.Reset:
                     // Did the data type change during the reset?  If not, we can recycle

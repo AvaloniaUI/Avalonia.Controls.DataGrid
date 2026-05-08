@@ -3444,20 +3444,22 @@ namespace Avalonia.Collections
             }
             
             // fire notifications for removes
-            if (args.OldItems != null && 
+            if (args.OldItems != null &&
                 (args.Action == NotifyCollectionChangedAction.Remove ||
-                args.Action == NotifyCollectionChangedAction.Replace))
+                args.Action == NotifyCollectionChangedAction.Replace ||
+                args.Action == NotifyCollectionChangedAction.Move))
             {
                 foreach (var removedItem in args.OldItems)
                 {
-                    ProcessRemoveEvent(removedItem, args.Action == NotifyCollectionChangedAction.Replace);
+                    ProcessRemoveEvent(removedItem, args.Action != NotifyCollectionChangedAction.Remove);
                 }
             }
 
             // fire notifications for adds
-            if (args.NewItems != null && 
+            if (args.NewItems != null &&
                 (args.Action == NotifyCollectionChangedAction.Add ||
-                 args.Action == NotifyCollectionChangedAction.Replace))
+                 args.Action == NotifyCollectionChangedAction.Replace ||
+                 args.Action == NotifyCollectionChangedAction.Move))
             {
                 for (var i = 0; i < args.NewItems.Count; i++)
                 {
@@ -3467,7 +3469,8 @@ namespace Avalonia.Collections
                     }
                 }
             }
-            if (args.Action != NotifyCollectionChangedAction.Replace)
+            if (args.Action != NotifyCollectionChangedAction.Replace &&
+                args.Action != NotifyCollectionChangedAction.Move)
             {
                 OnPropertyChanged(nameof(ItemCount));
             }
