@@ -3445,45 +3445,46 @@ namespace Avalonia.Collections
 
             if (args.Action == NotifyCollectionChangedAction.Move)
             {
-                int itemCount = args.OldItems?.Count ?? 0;
-                if (args.NewStartingIndex >= args.OldStartingIndex &&
-                    args.NewStartingIndex <= args.OldStartingIndex + itemCount - 1)
+                if (args.OldItems is not { } oldItems || args.NewItems is not { } newItems)
                 {
                     return;
                 }
-
-                if (args.OldItems != null)
+                
+                int itemCount = oldItems.Count;
+                if (args.NewStartingIndex >= args.OldStartingIndex &&
+                    args.NewStartingIndex <= args.OldStartingIndex + itemCount - 1)
                 {
-                    foreach (var removedItem in args.OldItems)
+                    // the target index for the move is within the items being moved, do nothing
+                    return;
+                }
+
+                foreach (var removedItem in oldItems)
+                {
+                    ProcessRemoveEvent(removedItem, true);
+                }
+
+                int insertIndex;
+                int count = newItems.Count;
+                if (args.NewStartingIndex > args.OldStartingIndex)
+                {
+                    // item(s) are being moved down
+                    insertIndex = args.NewStartingIndex - count + 1;
+                }
+                else
+                {
+                    // item(s) are being moved up
+                    insertIndex = args.NewStartingIndex;
+                }
+
+                for (var i = 0; i < count; i++)
+                {
+                    var item = newItems[i];
+                    if (Filter == null || PassesFilter(item))
                     {
-                        ProcessRemoveEvent(removedItem, true);
+                        ProcessAddEvent(item, insertIndex + i);
                     }
                 }
 
-                if (args.NewItems != null)
-                {
-                    int insertIndex;
-                    int count = args.NewItems.Count;
-                    if (args.NewStartingIndex > args.OldStartingIndex)
-                    {
-                        // item(s) are being moved down
-                        insertIndex = args.NewStartingIndex - count + 1;
-                    }
-                    else
-                    {
-                        // item(s) are being moved up
-                        insertIndex = args.NewStartingIndex;
-                    }
-
-                    for (var i = 0; i < count; i++)
-                    {
-                        var item = args.NewItems[i];
-                        if (Filter == null || PassesFilter(item))
-                        {
-                            ProcessAddEvent(item, insertIndex + i);
-                        }
-                    }
-                }
                 return;
             }
 

@@ -125,7 +125,9 @@ namespace DataGridSample
                     mutationList.MoveRange(firstIndex, count, firstIndex - 1);
                     dgMutations.SelectedItems.Clear();
                     foreach (var item in selected)
+                    {
                         dgMutations.SelectedItems.Add(item);
+                    }
                 }
             };
 
@@ -155,7 +157,9 @@ namespace DataGridSample
             {
                 var (firstIndex, count) = GetContiguousSelectionRange(dgMutations, mutationList);
                 if (firstIndex >= 0)
+                {
                     mutationList.MoveRange(firstIndex, count, firstIndex);
+                }
             };
 
             DataContext = this;
