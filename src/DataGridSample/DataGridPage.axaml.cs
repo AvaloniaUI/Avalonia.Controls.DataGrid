@@ -80,17 +80,9 @@ namespace DataGridSample
             btnMoveDown.IsEnabled = false;
             dgMutations.SelectionChanged += (s, e) =>
             {
-                if (dgMutations.SelectedItems.Count == 1 && dgMutations.SelectedItem is Person sel)
-                {
-                    var index = mutationList.IndexOf(sel);
-                    btnMoveUp.IsEnabled = index > 0;
-                    btnMoveDown.IsEnabled = index < mutationList.Count - 1;
-                }
-                else
-                {
-                    btnMoveUp.IsEnabled = false;
-                    btnMoveDown.IsEnabled = false;
-                }
+                var (firstIndex, count) = GetContiguousSelectionRange(dgMutations, mutationList);
+                btnMoveUp.IsEnabled = firstIndex > 0;
+                btnMoveDown.IsEnabled = firstIndex >= 0 && firstIndex + count < mutationList.Count;
             };
 
             this.Get<Button>("btnMutAdd").Click += (s, e) =>
@@ -126,26 +118,28 @@ namespace DataGridSample
 
             this.Get<Button>("btnMutMoveUp").Click += (s, e) =>
             {
-                if (dgMutations.SelectedItem is Person selectedItem)
+                var (firstIndex, count) = GetContiguousSelectionRange(dgMutations, mutationList);
+                if (firstIndex > 0)
                 {
-                    var index = mutationList.IndexOf(selectedItem);
-                    if (index > 0)
-                    {
-                        mutationList.Move(index, index - 1);
-                        dgMutations.SelectedItem = selectedItem;
-                    }
+                    var selected = dgMutations.SelectedItems.Cast<Person>().ToList();
+                    mutationList.MoveRange(firstIndex, count, firstIndex - 1);
+                    dgMutations.SelectedItems.Clear();
+                    foreach (var item in selected)
+                        dgMutations.SelectedItems.Add(item);
                 }
             };
 
             this.Get<Button>("btnMutMoveDown").Click += (s, e) =>
             {
-                if (dgMutations.SelectedItem is Person selectedItem)
+                var (firstIndex, count) = GetContiguousSelectionRange(dgMutations, mutationList);
+                if (firstIndex >= 0 && firstIndex + count < mutationList.Count)
                 {
-                    var index = mutationList.IndexOf(selectedItem);
-                    if (index >= 0 && index < mutationList.Count - 1)
+                    var selected = dgMutations.SelectedItems.Cast<Person>().ToList();
+                    mutationList.MoveRange(firstIndex, count, firstIndex + count);
+                    dgMutations.SelectedItems.Clear();
+                    foreach (var item in selected)
                     {
-                        mutationList.Move(index, index + 1);
-                        dgMutations.SelectedItem = selectedItem;
+                        dgMutations.SelectedItems.Add(item);
                     }
                 }
             };
@@ -160,6 +154,23 @@ namespace DataGridSample
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        private static (int firstIndex, int count) GetContiguousSelectionRange(DataGrid grid, IList<Person> list)
+        {
+            var indices = grid.SelectedItems.Cast<Person>().Select(list.IndexOf).OrderBy(i => i).ToList();
+            if (indices.Count == 0)
+            {
+                return (-1, 0);
+            }
+
+            for (var i = 1; i < indices.Count; i++)
+            {
+                if (indices[i] != indices[i - 1] + 1)
+                    return (-1, 0);
+            }
+
+            return (indices[0], indices.Count);
         }
 
         private class ReversedStringComparer : IComparer<object>, IComparer

@@ -3442,24 +3442,65 @@ namespace Avalonia.Collections
                 RefreshOrDefer();
                 return;
             }
-            
+
+            if (args.Action == NotifyCollectionChangedAction.Move)
+            {
+                if (args.OldItems != null)
+                {
+                    foreach (var removedItem in args.OldItems)
+                    {
+                        ProcessRemoveEvent(removedItem, true);
+                    }
+                }
+
+                if (args.NewItems != null)
+                {
+                    // Compute the correct insertion index in _internalList after
+                    // the moved items have been removed. args.NewStartingIndex is
+                    // in the original list's index space, so we adjust based on
+                    // the direction of the move.
+                    int insertIndex;
+                    int count = args.NewItems.Count;
+                    if (args.NewStartingIndex > args.OldStartingIndex)
+                    {
+                        insertIndex = args.NewStartingIndex - count + 1;
+                    }
+                    else if (args.NewStartingIndex < args.OldStartingIndex)
+                    {
+                        insertIndex = args.NewStartingIndex;
+                    }
+                    else
+                    {
+                        insertIndex = args.OldStartingIndex;
+                    }
+
+                    for (var i = 0; i < count; i++)
+                    {
+                        var item = args.NewItems[i];
+                        if (Filter == null || PassesFilter(item))
+                        {
+                            ProcessAddEvent(item, insertIndex + i);
+                        }
+                    }
+                }
+                return;
+            }
+
             // fire notifications for removes
             if (args.OldItems != null &&
                 (args.Action == NotifyCollectionChangedAction.Remove ||
-                args.Action == NotifyCollectionChangedAction.Replace ||
-                args.Action == NotifyCollectionChangedAction.Move))
+                args.Action == NotifyCollectionChangedAction.Replace))
             {
                 foreach (var removedItem in args.OldItems)
                 {
-                    ProcessRemoveEvent(removedItem, args.Action != NotifyCollectionChangedAction.Remove);
+                    ProcessRemoveEvent(removedItem, args.Action == NotifyCollectionChangedAction.Replace);
                 }
             }
 
             // fire notifications for adds
             if (args.NewItems != null &&
                 (args.Action == NotifyCollectionChangedAction.Add ||
-                 args.Action == NotifyCollectionChangedAction.Replace ||
-                 args.Action == NotifyCollectionChangedAction.Move))
+                 args.Action == NotifyCollectionChangedAction.Replace))
             {
                 for (var i = 0; i < args.NewItems.Count; i++)
                 {
@@ -3469,8 +3510,7 @@ namespace Avalonia.Collections
                     }
                 }
             }
-            if (args.Action != NotifyCollectionChangedAction.Replace &&
-                args.Action != NotifyCollectionChangedAction.Move)
+            if (args.Action != NotifyCollectionChangedAction.Replace)
             {
                 OnPropertyChanged(nameof(ItemCount));
             }
