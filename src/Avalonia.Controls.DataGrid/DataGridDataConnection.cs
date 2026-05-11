@@ -669,16 +669,9 @@ namespace Avalonia.Controls
                         }
                     }
                     break;
-                case NotifyCollectionChangedAction.Move:
-                    Debug.Assert(e.OldItems != null, "Unexpected NotifyCollectionChangedAction.Move notification");
-                    if (!IsGrouping)
-                    {
-                        // If we're grouping then we handle this through the CollectionViewGroup notifications
-                        Debug.Assert(e.OldItems.Count == 1);
-                        _owner.RemoveRowAt(e.OldStartingIndex, e.OldItems[0]);
-                        _owner.InsertRowAt(e.NewStartingIndex);
-                    }
-                    break;
+                // NotifyCollectionChangedAction.Move is not handled here.
+                // DataGridCollectionView.ProcessCollectionChanged converts Move into
+                // separate Remove+Add events which are handled by the cases above.
                 case NotifyCollectionChangedAction.Replace:
                     throw new NotSupportedException(); //
 
