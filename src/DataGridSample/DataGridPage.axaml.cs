@@ -144,6 +144,20 @@ namespace DataGridSample
                 }
             };
 
+            var btnMoveInPlace = this.Get<Button>("btnMutMoveInPlace");
+            btnMoveInPlace.IsEnabled = false;
+            dgMutations.SelectionChanged += (s, e) =>
+            {
+                var (idx, cnt) = GetContiguousSelectionRange(dgMutations, mutationList);
+                btnMoveInPlace.IsEnabled = idx >= 0;
+            };
+            btnMoveInPlace.Click += (s, e) =>
+            {
+                var (firstIndex, count) = GetContiguousSelectionRange(dgMutations, mutationList);
+                if (firstIndex >= 0)
+                    mutationList.MoveRange(firstIndex, count, firstIndex);
+            };
+
             DataContext = this;
         }
 

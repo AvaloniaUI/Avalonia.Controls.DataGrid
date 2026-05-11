@@ -3445,6 +3445,13 @@ namespace Avalonia.Collections
 
             if (args.Action == NotifyCollectionChangedAction.Move)
             {
+                int itemCount = args.OldItems?.Count ?? 0;
+                if (args.NewStartingIndex >= args.OldStartingIndex &&
+                    args.NewStartingIndex <= args.OldStartingIndex + itemCount - 1)
+                {
+                    return;
+                }
+
                 if (args.OldItems != null)
                 {
                     foreach (var removedItem in args.OldItems)
@@ -3455,23 +3462,17 @@ namespace Avalonia.Collections
 
                 if (args.NewItems != null)
                 {
-                    // Compute the correct insertion index in _internalList after
-                    // the moved items have been removed. args.NewStartingIndex is
-                    // in the original list's index space, so we adjust based on
-                    // the direction of the move.
                     int insertIndex;
                     int count = args.NewItems.Count;
                     if (args.NewStartingIndex > args.OldStartingIndex)
                     {
+                        // item(s) are being moved down
                         insertIndex = args.NewStartingIndex - count + 1;
-                    }
-                    else if (args.NewStartingIndex < args.OldStartingIndex)
-                    {
-                        insertIndex = args.NewStartingIndex;
                     }
                     else
                     {
-                        insertIndex = args.OldStartingIndex;
+                        // item(s) are being moved up
+                        insertIndex = args.NewStartingIndex;
                     }
 
                     for (var i = 0; i < count; i++)

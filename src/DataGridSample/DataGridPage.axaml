@@ -153,6 +153,7 @@
                     IsEnabled="{Binding #dataGridMutations.SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}" />
             <Button Name="btnMutMoveUp" Content="Move Selection Up" />
             <Button Name="btnMutMoveDown" Content="Move Selection Down" />
+            <Button Name="btnMutMoveInPlace" Content="Move In Place" />
           </StackPanel>
         </Grid>
       </TabItem>
