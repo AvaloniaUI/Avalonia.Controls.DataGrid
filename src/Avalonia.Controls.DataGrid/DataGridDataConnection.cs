@@ -673,7 +673,7 @@ namespace Avalonia.Controls
                 // DataGridCollectionView.ProcessCollectionChanged converts Move into
                 // separate Remove+Add events which are handled by the cases above.
                 case NotifyCollectionChangedAction.Replace:
-                    throw new NotSupportedException(); //
+                    throw new NotSupportedException(); // 
 
                 case NotifyCollectionChangedAction.Reset:
                     // Did the data type change during the reset?  If not, we can recycle
