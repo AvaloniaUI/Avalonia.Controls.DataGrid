@@ -185,7 +185,9 @@ namespace DataGridSample
             for (var i = 1; i < indices.Count; i++)
             {
                 if (indices[i] != indices[i - 1] + 1)
+                {
                     return (-1, 0);
+                }
             }
 
             return (indices[0], indices.Count);
