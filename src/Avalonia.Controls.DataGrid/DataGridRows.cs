@@ -1993,30 +1993,24 @@ namespace Avalonia.Controls
             if (start > end)
                 yield break;
 
-            var s = nums[start];
-            var prev = s;
+            var beginIndex = nums[start];
+            var prevIndex = beginIndex;
             for (int i = start + 1; i <= end; i++)
             {
-                var v = nums[i];
-                if (prev == v)
+                var current = nums[i];
+                if (prevIndex == current)
                     continue;
-                if (prev != v - 1)
+                if (prevIndex != current - 1)
                 {
-                    if (prev > s)
-                    {
-                        yield return new(s, prev);
-                    }
-                    else
-                        yield return new(s, prev);
-                    s = v;
+                    yield return new(beginIndex, prevIndex);
+
+                    beginIndex = current;
                 }
-                prev = v;
+                prevIndex = current;
             }
 
-            if (prev > s)
-                yield return new(s, prev);
-            else
-                yield return new(s, prev);
+            if (prevIndex > beginIndex)
+                yield return new(beginIndex, prevIndex);
         }
 
         public void SelectItems(System.Collections.IList items)
