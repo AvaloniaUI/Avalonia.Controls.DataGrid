@@ -1970,6 +1970,84 @@ namespace Avalonia.Controls
             }
         }
 
+        private IEnumerable<(int from, int to)> GetIdsRanges(IList<int> indexes)
+        {
+            if (indexes == null || indexes.Count == 0)
+                yield break;
+            var min = 0;
+            var max = DataConnection.List.Count - 1;
+
+            var nums = new int[indexes.Count];
+            indexes.CopyTo(nums, 0);
+            Array.Sort(nums);
+
+            int start = 0;
+            int end = nums.Length - 1;
+
+            while (nums[start] < min)
+                start++;
+
+            while (nums[end] > max)
+                end--;
+
+            if (start > end)
+                yield break;
+
+            var s = nums[start];
+            var prev = s;
+            for (int i = start + 1; i <= end; i++)
+            {
+                var v = nums[i];
+                if (prev == v)
+                    continue;
+                if (prev != v - 1)
+                {
+                    if (prev > s)
+                    {
+                        yield return new(s, prev);
+                    }
+                    else
+                        yield return new(s, prev);
+                    s = v;
+                }
+                prev = v;
+            }
+
+            if (prev > s)
+                yield return new(s, prev);
+            else
+                yield return new(s, prev);
+        }
+
+        public void SelectItems(System.Collections.IList items)
+        {
+            var indexes = new List<int>(items.Count);
+            foreach (var item in items)
+            {
+                var num = DataConnection.IndexOf(item);
+                if (num >= 0)
+                    indexes.Add(num);
+            }
+            Select(indexes);
+        }
+
+        public void Select(IList<int> rowIds)
+        {
+            try
+            {
+                _noSelectionChangeCount++;
+
+                foreach (var pair in GetIdsRanges(rowIds))
+                {
+                    SetRowsSelection(pair.from, pair.to);
+                }
+            }
+            finally
+            {
+                NoSelectionChangeCount--;
+            }
+        }
+
         private void UnloadElements(bool recycle)
         {
             // Since we're unloading all the elements, we can't be in editing mode anymore,
