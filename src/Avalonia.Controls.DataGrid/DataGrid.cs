@@ -1612,8 +1612,8 @@ namespace Avalonia.Controls
 
         internal int EditingColumnIndex
         {
-            get;
-            private set;
+            get => _editingColumnIndex;
+            private set => _editingColumnIndex = value;
         }
 
         internal DataGridRow EditingRow
@@ -3208,9 +3208,9 @@ namespace Avalonia.Controls
         //TODO TabStop
         internal bool WaitForLostFocus(Action action)
         {
-            if (EditingRow != null && _editingColumnIndex != -1 && !_executingLostFocusActions)
+            if (EditingRow != null && EditingColumnIndex != -1 && !_executingLostFocusActions)
             {
-                DataGridColumn editingColumn = ColumnsItemsInternal[_editingColumnIndex];
+                DataGridColumn editingColumn = ColumnsItemsInternal[EditingColumnIndex];
                 Control editingElement = editingColumn.GetCellContent(EditingRow);
                 if (editingElement != null && editingElement.ContainsChild(_focusedObject))
                 {
@@ -3995,9 +3995,9 @@ namespace Avalonia.Controls
 
                 DataGridColumn editingColumn = null;
 
-                if (EditingRow != null && _editingColumnIndex != -1)
+                if (EditingRow != null && EditingColumnIndex != -1)
                 {
-                    editingColumn = ColumnsItemsInternal[_editingColumnIndex];
+                    editingColumn = ColumnsItemsInternal[EditingColumnIndex];
                 }
 
                 if (focusLeftDataGrid && editingColumn is not DataGridTemplateColumn && !isPopup)
