@@ -19,21 +19,17 @@
       <Setter Property="Background" Value="{Binding Path=GDP, Mode=OneWay, Converter={StaticResource GDPConverter}}" />
     </ControlTheme>
   </UserControl.Resources>
-  <Grid RowDefinitions="Auto,Auto,*">
+  <Grid RowDefinitions="Auto,*">
     <StackPanel Orientation="Vertical" Spacing="4" Grid.Row="0">
       <TextBlock Classes="h2">A control for displaying and interacting with a data source.</TextBlock>
     </StackPanel>
-    <StackPanel Grid.Row="1" Spacing="4" Orientation="Horizontal" IsVisible="{Binding #EditableTab.IsSelected}">
-      <TextBlock Text="FontSize:" VerticalAlignment="Center"/>
-      <Slider x:Name="FontSizeSlider" Minimum="5" Maximum="30" Value="14" Width="100" VerticalAlignment="Center" />
-      <CheckBox x:Name="IsThreeStateCheckBox" IsChecked="False" Content="IsThreeState"/>
-    </StackPanel>
-    <TabControl Grid.Row="2">
+    <TabControl Grid.Row="1">
       <TabItem Header="DataGrid">
         <DockPanel>
           <StackPanel Orientation="Horizontal"
                       DockPanel.Dock="Top"
                       Spacing="5">
+            <CheckBox x:Name="AllowAutoHide" IsChecked="True" Content="Scroll Bar Allow Auto Hide"/>
             <CheckBox x:Name="ShowGDP" IsChecked="True" Content="Toggle GDP Column Visibility"/>
             <TextBlock Text="GDP Width:" VerticalAlignment="Center"/>
             <NumericUpDown x:Name="GDPWidth"
@@ -44,7 +40,7 @@
                     Value="200"/>
           </StackPanel>
           <DataGrid Name="dataGrid1" Margin="12" CanUserResizeColumns="True" CanUserReorderColumns="True" CanUserSortColumns="True" HeadersVisibility="All"
-                    RowBackground="#1000">
+                    RowBackground="#1000" ScrollViewer.AllowAutoHide="{Binding #AllowAutoHide.IsChecked}">
             <DataGrid.Styles>
               <Style Selector="DataGridRow">
                 <Setter Property="Header" Value="{Binding $self.Index}"/>
@@ -111,9 +107,14 @@
         </DataGrid>
       </TabItem>
       <TabItem x:Name="EditableTab" Header="Editable">
-        <Grid RowDefinitions="*,Auto">
+        <Grid RowDefinitions="Auto,*,Auto">
+          <StackPanel Spacing="5" Orientation="Horizontal">
+            <TextBlock Text="FontSize:" VerticalAlignment="Center"/>
+            <Slider x:Name="FontSizeSlider" Minimum="5" Maximum="30" Value="14" Width="100" VerticalAlignment="Center" />
+            <CheckBox x:Name="IsThreeStateCheckBox" IsChecked="False" Content="IsThreeState"/>
+          </StackPanel>
           <!-- Example of columns inheriting the data type from the Items source -->
-          <DataGrid Name="dataGridEdit" Margin="12" Grid.Row="0"
+          <DataGrid Name="dataGridEdit" Margin="12" Grid.Row="1"
                     ItemsSource="{Binding DataGrid3Source}">
             <DataGrid.Columns>
               <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" Width="2*" FontSize="{Binding #FontSizeSlider.Value, Mode=OneWay}" />
@@ -133,7 +134,7 @@
               </DataGridTemplateColumn>
             </DataGrid.Columns>
           </DataGrid>
-          <Button Grid.Row="1" Name="btnAdd" Margin="12,0,12,12" Content="Add" HorizontalAlignment="Right" />
+          <Button Grid.Row="2" Name="btnAdd" Margin="12,0,12,12" Content="Add" HorizontalAlignment="Right" />
         </Grid>
       </TabItem>
     </TabControl>

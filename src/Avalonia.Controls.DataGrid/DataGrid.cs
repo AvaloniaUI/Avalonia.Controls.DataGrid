@@ -2515,7 +2515,6 @@ namespace Avalonia.Controls
                 _hScrollBar.Orientation = Orientation.Horizontal;
                 _hScrollBar.IsVisible = false;
                 _hScrollBar.Scroll += HorizontalScrollBar_Scroll;
-                _hScrollBar.AllowAutoHide = this.GetValue(ScrollViewer.AllowAutoHideProperty);
             }
 
             if (_vScrollBar != null)
@@ -2532,7 +2531,6 @@ namespace Avalonia.Controls
                 _vScrollBar.Orientation = Orientation.Vertical;
                 _vScrollBar.IsVisible = false;
                 _vScrollBar.Scroll += VerticalScrollBar_Scroll;
-                _vScrollBar.AllowAutoHide = this.GetValue(ScrollViewer.AllowAutoHideProperty);
             }
 
             _topLeftCornerHeader = e.NameScope.Find<ContentControl>(DATAGRID_elementTopLeftCornerHeaderName);
