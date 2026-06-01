@@ -29,7 +29,7 @@
           <StackPanel Orientation="Horizontal"
                       DockPanel.Dock="Top"
                       Spacing="5">
-            <CheckBox x:Name="AllowAutoHide" IsChecked="True" Content="Scroll Bar Allow Auto Hide"/>
+            <CheckBox x:Name="AllowAutoHide" IsChecked="True" Content="Allow Scroll Bar Auto Hide"/>
             <CheckBox x:Name="ShowGDP" IsChecked="True" Content="Toggle GDP Column Visibility"/>
             <TextBlock Text="GDP Width:" VerticalAlignment="Center"/>
             <NumericUpDown x:Name="GDPWidth"
