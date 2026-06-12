@@ -1026,15 +1026,24 @@ namespace Avalonia.Controls
                     {
                         Debug.Assert(_negHorizontalOffset == 0);
                         dataGridColumn = ColumnsInternal.GetPreviousVisibleScrollingColumn(ColumnsItemsInternal[firstDisplayedScrollingCol]);
-                        Debug.Assert(dataGridColumn != null);
-                        Debug.Assert(GetEdgedColumnWidth(dataGridColumn) > displayWidth - cx);
-                        firstDisplayedScrollingCol = dataGridColumn.Index;
-                        _negHorizontalOffset = GetEdgedColumnWidth(dataGridColumn) - displayWidth + cx;
-                        _horizontalOffset -= displayWidth - cx;
-                        visibleScrollingColumnsTmp++;
-                        invalidate = true;
-                        cx = displayWidth;
-                        Debug.Assert(_negHorizontalOffset == GetNegHorizontalOffsetFromHorizontalOffset(_horizontalOffset));
+                        if (dataGridColumn == null)
+                        {
+                            _horizontalOffset = 0;
+                            _negHorizontalOffset = 0;
+                            HorizontalAdjustment = 0;
+                            invalidate = true;
+                        }
+                        else
+                        {
+                            Debug.Assert(GetEdgedColumnWidth(dataGridColumn) > displayWidth - cx);
+                            firstDisplayedScrollingCol = dataGridColumn.Index;
+                            _negHorizontalOffset = GetEdgedColumnWidth(dataGridColumn) - displayWidth + cx;
+                            _horizontalOffset -= displayWidth - cx;
+                            visibleScrollingColumnsTmp++;
+                            invalidate = true;
+                            cx = displayWidth;
+                            Debug.Assert(_negHorizontalOffset == GetNegHorizontalOffsetFromHorizontalOffset(_horizontalOffset));
+                        }
                     }
 
                     // update the number of visible columns to the new reality
@@ -1058,12 +1067,19 @@ namespace Avalonia.Controls
                 {
                     Debug.Assert(firstDisplayedScrollingCol >= 0);
                     dataGridColumn = ColumnsItemsInternal[firstDisplayedScrollingCol];
+                    DataGridColumn lastDisplayedColumn = dataGridColumn;
                     for (int jump = 0; jump < jumpFromFirstVisibleScrollingCol; jump++)
                     {
                         dataGridColumn = ColumnsInternal.GetNextVisibleColumn(dataGridColumn);
                         Debug.Assert(dataGridColumn != null);
+                        if (dataGridColumn == null)
+                        {
+                            break;
+                        }
+
+                        lastDisplayedColumn = dataGridColumn;
                     }
-                    DisplayData.LastTotallyDisplayedScrollingCol = dataGridColumn.Index;
+                    DisplayData.LastTotallyDisplayedScrollingCol = lastDisplayedColumn.Index;
                 }
             }
             else

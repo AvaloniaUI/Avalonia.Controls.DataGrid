@@ -3988,7 +3988,7 @@ namespace Avalonia.Controls
             _focusedObject = null;
             if (ContainsFocus)
             {
-                var focusedObject = TopLevel.GetTopLevel(this)?.FocusManager.GetFocusedElement() as Visual;               
+                var focusedObject = TopLevel.GetTopLevel(this)?.FocusManager.GetFocusedElement() as Visual;
                 var root = focusedObject?.GetVisualRoot();
                 var isPopup = root != null && root != this.GetVisualRoot();
                 var focusLeftDataGrid = !this.IsVisualAncestorOf(focusedObject);
@@ -4439,6 +4439,11 @@ namespace Avalonia.Controls
             }
             else
             {
+                if (IsColumnOutOfBounds(DisplayData.FirstDisplayedScrollingCol))
+                {
+                    return 0;
+                }
+
                 // The entire first column is displayed, show the entire previous column when the user clicks
                 // the left button
                 DataGridColumn previousColumn = ColumnsInternal.GetPreviousVisibleScrollingColumn(
@@ -4459,7 +4464,7 @@ namespace Avalonia.Controls
         // This is a method rather than a property to emphasize a calculation
         private double GetHorizontalSmallScrollIncrease()
         {
-            if (DisplayData.FirstDisplayedScrollingCol >= 0)
+            if (!IsColumnOutOfBounds(DisplayData.FirstDisplayedScrollingCol))
             {
                 return GetEdgedColumnWidth(ColumnsItemsInternal[DisplayData.FirstDisplayedScrollingCol]) - _negHorizontalOffset;
             }
