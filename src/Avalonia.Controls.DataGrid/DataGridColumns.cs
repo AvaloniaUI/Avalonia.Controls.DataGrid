@@ -1071,7 +1071,6 @@ namespace Avalonia.Controls
                     for (int jump = 0; jump < jumpFromFirstVisibleScrollingCol; jump++)
                     {
                         dataGridColumn = ColumnsInternal.GetNextVisibleColumn(dataGridColumn);
-                        Debug.Assert(dataGridColumn != null);
                         if (dataGridColumn == null)
                         {
                             break;
