@@ -19,7 +19,7 @@ public class LeakTests
         // When attached to INotifyCollectionChanged, DataGrid will subscribe to its events, potentially causing leak
         async Task<(Window Window, WeakReference<DataGrid> DataGrid)> Run()
         {
-            using var session = HeadlessUnitTestSession.StartNew(typeof(Application));
+            await using var session = HeadlessUnitTestSession.StartNew(typeof(Application));
 
             return await session.Dispatch(() =>
             {
