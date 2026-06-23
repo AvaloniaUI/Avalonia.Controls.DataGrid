@@ -353,6 +353,7 @@
                          Grid.ColumnSpan="2"
                          Fill="{DynamicResource ThemeControlMidHighBrush}" />
               <ScrollBar Name="PART_VerticalScrollbar"
+                         AllowAutoHide="{Binding Path=(ScrollViewer.AllowAutoHide), RelativeSource={RelativeSource TemplatedParent}}"
                          Grid.Row="1"
                          Grid.Column="2"
                          Width="{DynamicResource ScrollBarThickness}"
@@ -363,6 +364,7 @@
                     ColumnDefinitions="Auto,*">
                 <Rectangle Name="PART_FrozenColumnScrollBarSpacer" />
                 <ScrollBar Name="PART_HorizontalScrollbar"
+                           AllowAutoHide="{Binding Path=(ScrollViewer.AllowAutoHide), RelativeSource={RelativeSource TemplatedParent}}"
                            Grid.Column="1"
                            Height="{DynamicResource ScrollBarThickness}"
                            Orientation="Horizontal" />
