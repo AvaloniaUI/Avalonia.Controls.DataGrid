@@ -646,6 +646,21 @@ namespace Avalonia.Controls
             int addedRows = 0;
             while (slot < totalSlots && AvailableSlotElementRoom > 0)
             {
+                if (_collapsedSlotsTable.Contains(slot))
+                {
+                    // Collapsed slot: count it, but don't generate an element or count it as visible.
+                    if (slot == nextGroupSlot)
+                    {
+                        nextGroupSlot = groupSlots.MoveNext() ? groupSlots.Current : -1;
+                    }
+                    else
+                    {
+                        addedRows++;
+                    }
+                    SlotCount++;
+                    slot++;
+                    continue;
+                }
                 if (slot == nextGroupSlot)
                 {
                     DataGridRowGroupInfo groupRowInfo = RowGroupHeadersTable.GetValueAt(slot);
@@ -663,7 +678,7 @@ namespace Avalonia.Controls
             if (slot < totalSlots)
             {
                 SlotCount += totalSlots - slot;
-                VisibleSlotCount += totalSlots - slot;
+                VisibleSlotCount += totalSlots - slot - _collapsedSlotsTable.GetIndexCount(slot, totalSlots - 1);
                 OnAddedElement_Phase2(0,
                     updateVerticalScrollBarOnly: _vScrollBar == null || _vScrollBar.IsVisible);
                 OnElementsChanged(grew: true);
@@ -2262,7 +2277,7 @@ namespace Avalonia.Controls
                         {
                             group.Items.CollectionChanged += CollectionViewGroup_CollectionChanged;
                         }
-                        var newGroupInfo = new DataGridRowGroupInfo(group, true, parentGroupInfo.Level + 1, insertSlot, insertSlot);
+                        var newGroupInfo = new DataGridRowGroupInfo(group, !_areRowGroupsInitiallyCollapsed, parentGroupInfo.Level + 1, insertSlot, insertSlot);
                         InsertElementAt(insertSlot,
                             rowIndex: -1,
                             item: null,
@@ -2426,7 +2441,7 @@ namespace Avalonia.Controls
                         treeCount += collectionViewGroup.Items.Count;
                     }
                 }
-                RowGroupHeadersTable.AddValue(rootSlot, new DataGridRowGroupInfo(collectionViewGroup, true, level, rootSlot, rootSlot + treeCount - 1));
+                RowGroupHeadersTable.AddValue(rootSlot, new DataGridRowGroupInfo(collectionViewGroup, !_areRowGroupsInitiallyCollapsed, level, rootSlot, rootSlot + treeCount - 1));
             }
             return treeCount;
         }
@@ -2455,6 +2470,9 @@ namespace Avalonia.Controls
 
         private void PopulateRowGroupHeadersTable()
         {
+            // Read the collapse preference once; later changes don't affect already-generated groups.
+            _areRowGroupsInitiallyCollapsed = AreRowGroupsInitiallyCollapsed;
+
             if (DataConnection.CollectionView != null
                 && DataConnection.CollectionView.CanGroup
                 && DataConnection.CollectionView.Groups != null)
@@ -2464,11 +2482,22 @@ namespace Avalonia.Controls
                 _topLevelGroup.CollectionChanged += CollectionViewGroup_CollectionChanged;
                 foreach (object group in DataConnection.CollectionView.Groups)
                 {
-                    totalSlots += CountAndPopulateGroupHeaders(group, totalSlots, 0);
+                    int rootSlot = totalSlots;
+                    int treeCount = CountAndPopulateGroupHeaders(group, rootSlot, 0);
+                    totalSlots += treeCount;
+                    if (_areRowGroupsInitiallyCollapsed && treeCount > 1)
+                    {
+                        // A collapsed group hides all of its descendant slots.
+                        _collapsedSlotsTable.AddValues(rootSlot + 1, treeCount - 1, false);
+                    }
                 }
             }
             SlotCount = DataConnection.Count + RowGroupHeadersTable.IndexCount;
             VisibleSlotCount = SlotCount;
+            if (_areRowGroupsInitiallyCollapsed)
+            {
+                VisibleSlotCount -= _collapsedSlotsTable.GetIndexCount(0, SlotCount - 1);
+            }
         }
 
         private void RefreshRowGroupHeaders()
