@@ -669,6 +669,9 @@ namespace Avalonia.Controls
                         }
                     }
                     break;
+                // NotifyCollectionChangedAction.Move is not handled here.
+                // DataGridCollectionView.ProcessCollectionChanged converts Move into
+                // separate Remove+Add events which are handled by the cases above.
                 case NotifyCollectionChangedAction.Replace:
                     throw new NotSupportedException(); // 
 
