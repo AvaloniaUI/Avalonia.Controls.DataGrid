@@ -474,7 +474,12 @@ namespace Avalonia.Controls
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
             base.OnDetachedFromLogicalTree(e);
-            OwningGrid.RemoveReferenceFromCollectionViewGroup(RowGroupInfo.CollectionViewGroup);
+             
+            if (OwningGrid != null && RowGroupInfo?.CollectionViewGroup is { } collectionViewGroup)
+            {
+                OwningGrid.RemoveReferenceFromCollectionViewGroup(collectionViewGroup);
+            }
+
             OwningGrid = null;
         }
     }
