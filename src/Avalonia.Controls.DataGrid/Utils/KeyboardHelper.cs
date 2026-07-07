@@ -3,6 +3,7 @@
 // Please see http://go.microsoft.com/fwlink/?LinkID=131993 for details.
 // All other rights reserved.
 
+using Avalonia;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.VisualTree;
@@ -26,8 +27,8 @@ namespace Avalonia.Controls.Utils
 
         public static KeyModifiers GetPlatformCtrlOrCmdKeyModifier(Control target)
         {
-            var keymap = TopLevel.GetTopLevel(target)!.GetPlatformSettings()!.HotkeyConfiguration;
-            return keymap.CommandModifiers;
+            var keymap = (target.GetPlatformSettings() ?? Application.Current?.PlatformSettings)?.HotkeyConfiguration;
+            return keymap?.CommandModifiers ?? KeyModifiers.Control;
         }
     }
 }
