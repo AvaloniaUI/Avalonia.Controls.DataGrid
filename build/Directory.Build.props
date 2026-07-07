@@ -1,0 +1,4 @@
+<!-- Isolates the build project from the repository's Directory.Build.props (in particular
+     UseArtifactsOutput, which breaks NUKE's tool path resolution). -->
+<Project>
+</Project>

@@ -9,6 +9,9 @@ variables:
 
 steps:
 
+- checkout: self
+  submodules: true
+
 - task: PowerShell@2
   displayName: 'Set non-release version suffix'
   condition: not(startsWith(variables['Build.SourceBranch'], 'refs/heads/release/'))
@@ -37,6 +40,11 @@ steps:
 - script: dotnet pack $(commonDotNetParameters) --no-build
   displayName: 'Create package'
 
+# Generates a per-package CycloneDX SBOM (EU CRA evidence) and embeds it into each .nupkg,
+# so it must run after packing and before the packages are published.
+- script: dotnet run --project build/_build.csproj -- --packages "$(Build.SourcesDirectory)/artifacts/package/$(lowerConfiguration)" --output "$(Build.SourcesDirectory)/artifacts/sbom"
+  displayName: 'Generate SBOMs'
+
 - task: PublishTestResults@2
   displayName: 'Publish test results'
   inputs:
@@ -49,4 +57,11 @@ steps:
   inputs:
     PathtoPublish: '$(Build.SourcesDirectory)/artifacts/package/$(lowerConfiguration)/'
     ArtifactName: 'drop'
+    publishLocation: 'Container'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish SBOM'
+  inputs:
+    PathtoPublish: '$(Build.SourcesDirectory)/artifacts/sbom/'
+    ArtifactName: 'sbom'
     publishLocation: 'Container'

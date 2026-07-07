@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <RootNamespace></RootNamespace>
+    <NoWarn>CS0649;CS0169;NU1901;NU1902;NU1903;NU1904</NoWarn>
+    <NukeRootDirectory>..</NukeRootDirectory>
+    <NukeScriptDirectory>..</NukeScriptDirectory>
+    <NukeTelemetryVersion>1</NukeTelemetryVersion>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Nuke.Common" Version="9.0.4" />
+    <PackageDownload Include="CycloneDX" Version="[6.2.0]" />
+    <ProjectReference Include="../build-common/nuke/NukeExtensions.csproj" />
+  </ItemGroup>
+
+</Project>
