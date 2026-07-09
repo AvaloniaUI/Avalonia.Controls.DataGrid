@@ -11,5 +11,10 @@ See the [documentation](https://docs.avaloniaui.net/docs/reference/controls/data
 
 ## Status
 
+> [!WARNING]  
+> `DataGrid` is deprecated and only receive bug fixes.  
+> To display read-only tabular data, we recommend using [TableView](https://docs.avaloniaui.net/controls/data-display/structured-data/tableview).  
+> For advanced editing, we recommend using [TreeDataGrid](https://docs.avaloniaui.net/controls/data-display/structured-data/treedatagrid)  
+
 The `DataGrid` control was initially ported from Silverlight, and was previously part of the [Avalonia main repository](https://github.com/AvaloniaUI/Avalonia).  
 It now lives in its [own repository](https://github.com/AvaloniaUI/Avalonia.Controls.DataGrid): see [this discussion](https://github.com/AvaloniaUI/Avalonia/discussions/18388) for details.
