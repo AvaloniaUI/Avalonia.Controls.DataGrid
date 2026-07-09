@@ -109,6 +109,8 @@ namespace Avalonia.Controls
         private bool _areHandlersSuspended;
         private bool _autoSizingColumns;
         private IndexToValueTable<bool> _collapsedSlotsTable;
+        // snapshot of AreRowGroupsInitiallyCollapsed, read when the row groups are generated
+        private bool _areRowGroupsInitiallyCollapsed;
         private Control _clickedElement;
 
         // used to store the current column during a Reset
@@ -376,6 +378,23 @@ namespace Avalonia.Controls
         {
             get { return GetValue(IsReadOnlyProperty); }
             set { SetValue(IsReadOnlyProperty, value); }
+        }
+
+        public static readonly StyledProperty<bool> AreRowGroupsInitiallyCollapsedProperty =
+            AvaloniaProperty.Register<DataGrid, bool>(nameof(AreRowGroupsInitiallyCollapsed));
+
+        /// <summary>
+        /// Gets or sets a value that indicates whether row groups are collapsed when they are
+        /// first generated.
+        /// </summary>
+        /// <remarks>
+        /// This value is only read when the row groups are generated. Changing it afterwards does
+        /// not affect existing groups; use CollapseRowGroup and ExpandRowGroup for those.
+        /// </remarks>
+        public bool AreRowGroupsInitiallyCollapsed
+        {
+            get { return GetValue(AreRowGroupsInitiallyCollapsedProperty); }
+            set { SetValue(AreRowGroupsInitiallyCollapsedProperty, value); }
         }
 
         public static readonly StyledProperty<bool> AreRowGroupHeadersFrozenProperty =
@@ -930,8 +949,9 @@ namespace Avalonia.Controls
                 // Set the SlotCount (from the data count and number of row group headers) before we make the default selection
                 PopulateRowGroupHeadersTable();
                 SelectedItem = null;
-                if (DataConnection.CollectionView != null && setDefaultSelection)
+                if (DataConnection.CollectionView != null && setDefaultSelection && !_areRowGroupsInitiallyCollapsed)
                 {
+                    // Selecting the current item would expand its group, so skip it when collapsed.
                     SelectedItem = DataConnection.CollectionView.CurrentItem;
                 }
 
@@ -4548,6 +4568,12 @@ namespace Avalonia.Controls
                 else
                 {
                     slot = SlotFromRowIndex(DataConnection.CollectionView.CurrentPosition);
+                    if (_areRowGroupsInitiallyCollapsed && _collapsedSlotsTable.Contains(slot))
+                    {
+                        // The current item is in a collapsed group; use the first header rather
+                        // than expanding the group to make it current.
+                        slot = RowGroupHeadersTable.Contains(0) ? 0 : -1;
+                    }
                 }
             }
             else
