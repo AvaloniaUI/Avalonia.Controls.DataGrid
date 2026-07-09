@@ -12,7 +12,7 @@ See the [documentation](https://docs.avaloniaui.net/docs/reference/controls/data
 ## Status
 
 > [!WARNING]  
-> `DataGrid` is deprecated and only receive bug fixes.  
+> `DataGrid` is deprecated and only receives bug fixes.  
 > To display read-only tabular data, we recommend using [TableView](https://docs.avaloniaui.net/controls/data-display/structured-data/tableview).  
 > For advanced editing, we recommend using [TreeDataGrid](https://docs.avaloniaui.net/controls/data-display/structured-data/treedatagrid)  
 
