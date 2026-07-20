@@ -2344,7 +2344,7 @@ namespace Avalonia.Controls
                     }
                 }
 
-                if (scrollHeight != 0)
+                if (Math.Abs(scrollHeight) > LayoutHelper.LayoutEpsilon)
                 {
                     DisplayData.PendingVerticalScrollHeight = scrollHeight;
                     handled = true;
