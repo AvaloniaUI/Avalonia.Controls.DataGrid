@@ -137,6 +137,27 @@
           <Button Grid.Row="2" Name="btnAdd" Margin="12,0,12,12" Content="Add" HorizontalAlignment="Right" />
         </Grid>
       </TabItem>
+      <TabItem Header="Collection Mutations">
+        <Grid RowDefinitions="*,Auto">
+          <DataGrid Name="dataGridMutations" Grid.Row="0" Margin="12" IsReadOnly="True"
+                    ItemsSource="{Binding MutationsSource}">
+            <DataGrid.Columns>
+              <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" Width="2*" x:DataType="models:Person" />
+              <DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" Width="2*" x:DataType="models:Person" />
+              <DataGridTextColumn Header="Age" Binding="{Binding Age}" Width="*" x:DataType="models:Person" />
+            </DataGrid.Columns>
+          </DataGrid>
+          <StackPanel Grid.Row="1" Orientation="Horizontal" Spacing="5" Margin="12,0,12,12" HorizontalAlignment="Right">
+            <Button Name="btnMutAdd" Content="Add" />
+            <Button Name="btnMutAddRange" Content="Add Range (3)" />
+            <Button Name="btnMutRemove" Content="Remove Selection"
+                    IsEnabled="{Binding #dataGridMutations.SelectedItem, Converter={x:Static ObjectConverters.IsNotNull}}" />
+            <Button Name="btnMutMoveUp" Content="Move Selection Up" />
+            <Button Name="btnMutMoveDown" Content="Move Selection Down" />
+            <Button Name="btnMutMoveInPlace" Content="Move In Place" />
+          </StackPanel>
+        </Grid>
+      </TabItem>
     </TabControl>
   </Grid>
 </UserControl>

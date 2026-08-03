@@ -2207,6 +2207,7 @@ namespace Avalonia.Controls
                     case NotifyCollectionChangedAction.Remove:
                         CollectionViewGroup_CollectionChanged_Remove(sender, e);
                         break;
+                    // TODO: handle NotifyCollectionChangedAction.Move
                 }
             }
         }

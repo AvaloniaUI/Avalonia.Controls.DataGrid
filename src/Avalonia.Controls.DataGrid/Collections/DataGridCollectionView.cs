@@ -3442,9 +3442,54 @@ namespace Avalonia.Collections
                 RefreshOrDefer();
                 return;
             }
-            
+
+            if (args.Action == NotifyCollectionChangedAction.Move)
+            {
+                if (args.OldItems is not { } oldItems || args.NewItems is not { } newItems)
+                {
+                    return;
+                }
+                
+                int itemCount = oldItems.Count;
+                if (args.NewStartingIndex >= args.OldStartingIndex &&
+                    args.NewStartingIndex <= args.OldStartingIndex + itemCount - 1)
+                {
+                    // the target index for the move is within the items being moved, do nothing
+                    return;
+                }
+
+                foreach (var removedItem in oldItems)
+                {
+                    ProcessRemoveEvent(removedItem, true);
+                }
+
+                int insertIndex;
+                int count = newItems.Count;
+                if (args.NewStartingIndex > args.OldStartingIndex)
+                {
+                    // item(s) are being moved down
+                    insertIndex = args.NewStartingIndex - count + 1;
+                }
+                else
+                {
+                    // item(s) are being moved up
+                    insertIndex = args.NewStartingIndex;
+                }
+
+                for (var i = 0; i < count; i++)
+                {
+                    var item = newItems[i];
+                    if (Filter == null || PassesFilter(item))
+                    {
+                        ProcessAddEvent(item, insertIndex + i);
+                    }
+                }
+
+                return;
+            }
+
             // fire notifications for removes
-            if (args.OldItems != null && 
+            if (args.OldItems != null &&
                 (args.Action == NotifyCollectionChangedAction.Remove ||
                 args.Action == NotifyCollectionChangedAction.Replace))
             {
@@ -3455,7 +3500,7 @@ namespace Avalonia.Collections
             }
 
             // fire notifications for adds
-            if (args.NewItems != null && 
+            if (args.NewItems != null &&
                 (args.Action == NotifyCollectionChangedAction.Add ||
                  args.Action == NotifyCollectionChangedAction.Replace))
             {
