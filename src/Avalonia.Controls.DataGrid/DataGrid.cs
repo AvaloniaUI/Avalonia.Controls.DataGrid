@@ -5729,6 +5729,7 @@ namespace Avalonia.Controls
                     {
                         _hScrollBar.Maximum = 0;
                         _hScrollBar.ViewportSize = 0;
+                        _hScrollBar.LargeChange = 0;
                         _hScrollBar.IsEnabled = false;
                     }
 
@@ -5748,6 +5749,9 @@ namespace Avalonia.Controls
                 else
                 {
                     _hScrollBar.Maximum = 0;
+                    _hScrollBar.ViewportSize = 0;
+                    _hScrollBar.LargeChange = 0;
+                    _hScrollBar.IsEnabled = false;
                     if (_hScrollBar.IsVisible)
                     {
                         // This will trigger a call to this method via Cells_SizeChanged for
@@ -5795,6 +5799,7 @@ namespace Avalonia.Controls
                     {
                         _vScrollBar.Maximum = 0;
                         _vScrollBar.ViewportSize = 0;
+                        _vScrollBar.LargeChange = 0;
                         _vScrollBar.IsEnabled = false;
                     }
 
@@ -5814,6 +5819,9 @@ namespace Avalonia.Controls
                 else
                 {
                     _vScrollBar.Maximum = 0;
+                    _vScrollBar.ViewportSize = 0;
+                    _vScrollBar.LargeChange = 0;
+                    _vScrollBar.IsEnabled = false;
                     if (_vScrollBar.IsVisible)
                     {
                         // This will trigger a call to this method via Cells_SizeChanged for
