@@ -442,6 +442,7 @@ namespace Avalonia.Controls
             EnsureRowsPresenterVisibility();
             EnsureHorizontalLayout();
             InvalidateColumnHeadersMeasure();
+            UpdatePseudoClasses();
 
             if (updatedColumn.IsVisible &&
                 ColumnsInternal.VisibleColumnCount == 1 && CurrentColumnIndex == -1)
